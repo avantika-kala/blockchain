@@ -1,4 +1,5 @@
 from datetime import datetime
+from itertools import chain
 from block import Block
 import random
 
@@ -11,6 +12,7 @@ class Blockchain:
         self.chain = []
         self.users = dict() # key=UserID and value=name
         self.property = dict() # key=PropertyID and value=owner
+        self.peer = dict() # key=IP:Port and value=stake
         genesis_block = Block(len(self.chain) + 1, self.transactions, 0)
         self.chain.append(genesis_block)
     
@@ -38,15 +40,18 @@ class Blockchain:
     def add_property(self, ownerID, propertyID):
         self.users[propertyID] = ownerID
         return True
+    
+    def add_peer(self, socket, stake):
+        self.peer[socket] = stake
+        return self.peer
 
     def new_block(self, prev_hash=None):   
         print('Crearting new block...')
         prev_hash = self.last_block.my_hash #['my_hash']
         b = Block(len(self.chain) + 1, self.transactions, prev_hash)
         self.chain.append(b)
-        print('Block added - ', b.print_block())
         self.transactions = []
-        return b
+        return len(self.chain)
 
 
 
